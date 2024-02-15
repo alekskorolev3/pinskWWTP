@@ -1,17 +1,25 @@
 import React, {useEffect, useState} from "react"
 
 import styles from '../styles/Modules.module.css'
-import {Button, ConfigProvider, DatePicker, Form, InputNumber, message} from "antd";
+import {Button, ConfigProvider, DatePicker, Form, InputNumber, message, Modal} from "antd";
 import {useLabDataActions} from "../actions/lab.actions";
 import {API} from "../helpers/const";
 import locale from 'antd/es/date-picker/locale/ru_RU';
 import 'dayjs/locale/ru';
+import dayjs from "dayjs";
 
 const LabData = () => {
 
     const labDataActions = useLabDataActions()
 
     const [messageApi, contextHolder] = message.useMessage();
+    const successPost = () => {
+        messageApi.open({
+            type: 'success',
+            content: `Данные успешно сохранены`,
+        });
+    };
+
     const errorGet = () => {
         messageApi.open({
             type: 'error',
@@ -29,228 +37,238 @@ const LabData = () => {
     const handleForm = async () => {
         await labDataActions.postLabData({...tableValues, datetime: datetime})
             .then((data) => {
-                console.log(data)
-                setTableValues(prev => (data.data))
+                if (data) {
+                    setTableValues(prev => (data.data))
+                    successPost()
+                }
+                else errorPost()
             })
             .catch(() => errorPost())
     }
 
+
     const [tableValues, setTableValues] = useState({
         bbo1: {
-            doseFromWeight: 57.5,
-            doseFromVolume: 10,
-            ashPercent: 10,
-            suspendSubstSourceWater: 10,
-            suspendSubstAfterSettling: 10,
-            suspendSubstInPurified: 10,
-            concentrationExcessActive: 10,
-            xpkInputAero: 10,
-            bpkInputOS: 10,
-            bpkInputBbo: 10,
-            bpkOutputBbo: 10,
-            nitrogenAmmoniumInputBbo: 10,
-            nitrogenAmmoniumOutputBbo: 10,
-            nitrogenNitriteInputBbo: 10,
-            nitrogenNitriteOutputBbo: 10,
-            nitrogenNitrateInputBbo: 10,
-            nitrogenNitrateOutputBbo: 10,
-            totalNitrogenInputBO: 10,
-            organicNitrogenOutputBbo: 10,
-            totalPhosphorusOutput: 10,
-            totalPhosphorusOutputBO: 10,
-            phSludge: 5,
-            sludgeTemperature: 15,
-            oxygenModeNitrificationZone: 10
+            doseFromWeight: 0,
+            doseFromVolume: 0,
+            ashPercent: 0,
+            suspendSubstSourceWater: 0,
+            suspendSubstAfterSettling: 0,
+            suspendSubstInPurified: 0,
+            concentrationExcessActive: 0,
+            xpkInputAero: 0,
+            bpkInputOS: 0,
+            bpkInputBbo: 0,
+            bpkOutputBbo: 0,
+            nitrogenAmmoniumInputBbo: 0,
+            nitrogenAmmoniumOutputBbo: 0,
+            nitrogenNitriteInputBbo: 0,
+            nitrogenNitriteOutputBbo: 0,
+            nitrogenNitrateInputBbo: 0,
+            nitrogenNitrateOutputBbo: 0,
+            totalNitrogenInputBO: 0,
+            organicNitrogenOutputBbo: 0,
+            totalPhosphorusOutput: 0,
+            totalPhosphorusOutputBO: 0,
+            phSludge: 0,
+            sludgeTemperature: 0,
+            oxygenModeNitrificationZone: 0
         },
         bbo2: {
-            doseFromWeight: 57.5,
-            doseFromVolume: 10,
-            ashPercent: 10,
-            suspendSubstSourceWater: 10,
-            suspendSubstAfterSettling: 10,
-            suspendSubstInPurified: 10,
-            concentrationExcessActive: 10,
-            xpkInputAero: 10,
-            bpkInputOS: 10,
-            bpkInputBbo: 10,
-            bpkOutputBbo: 10,
-            nitrogenAmmoniumInputBbo: 10,
-            nitrogenAmmoniumOutputBbo: 10,
-            nitrogenNitriteInputBbo: 10,
-            nitrogenNitriteOutputBbo: 10,
-            nitrogenNitrateInputBbo: 10,
-            nitrogenNitrateOutputBbo: 10,
-            totalNitrogenInputBO: 10,
-            organicNitrogenOutputBbo: 10,
-            totalPhosphorusOutput: 10,
-            totalPhosphorusOutputBO: 10,
-            phSludge: 5,
-            sludgeTemperature: 15,
-            oxygenModeNitrificationZone: 10
+            doseFromWeight: 0,
+            doseFromVolume: 0,
+            ashPercent: 0,
+            suspendSubstSourceWater: 0,
+            suspendSubstAfterSettling: 0,
+            suspendSubstInPurified: 0,
+            concentrationExcessActive: 0,
+            xpkInputAero: 0,
+            bpkInputOS: 0,
+            bpkInputBbo: 0,
+            bpkOutputBbo: 0,
+            nitrogenAmmoniumInputBbo: 0,
+            nitrogenAmmoniumOutputBbo: 0,
+            nitrogenNitriteInputBbo: 0,
+            nitrogenNitriteOutputBbo: 0,
+            nitrogenNitrateInputBbo: 0,
+            nitrogenNitrateOutputBbo: 0,
+            totalNitrogenInputBO: 0,
+            organicNitrogenOutputBbo: 0,
+            totalPhosphorusOutput: 0,
+            totalPhosphorusOutputBO: 0,
+            phSludge: 0,
+            sludgeTemperature: 0,
+            oxygenModeNitrificationZone: 0
         },
         bbo3: {
-            doseFromWeight: 57.5,
-            doseFromVolume: 10,
-            ashPercent: 10,
-            suspendSubstSourceWater: 10,
-            suspendSubstAfterSettling: 10,
-            suspendSubstInPurified: 10,
-            concentrationExcessActive: 10,
-            xpkInputAero: 10,
-            bpkInputOS: 10,
-            bpkInputBbo: 10,
-            bpkOutputBbo: 10,
-            nitrogenAmmoniumInputBbo: 10,
-            nitrogenAmmoniumOutputBbo: 10,
-            nitrogenNitriteInputBbo: 10,
-            nitrogenNitriteOutputBbo: 10,
-            nitrogenNitrateInputBbo: 10,
-            nitrogenNitrateOutputBbo: 10,
-            totalNitrogenInputBO: 10,
-            organicNitrogenOutputBbo: 10,
-            totalPhosphorusOutput: 10,
-            totalPhosphorusOutputBO: 10,
-            phSludge: 5,
-            sludgeTemperature: 15,
-            oxygenModeNitrificationZone: 10
+            doseFromWeight: 0,
+            doseFromVolume: 0,
+            ashPercent: 0,
+            suspendSubstSourceWater: 0,
+            suspendSubstAfterSettling: 0,
+            suspendSubstInPurified: 0,
+            concentrationExcessActive: 0,
+            xpkInputAero: 0,
+            bpkInputOS: 0,
+            bpkInputBbo: 0,
+            bpkOutputBbo: 0,
+            nitrogenAmmoniumInputBbo: 0,
+            nitrogenAmmoniumOutputBbo: 0,
+            nitrogenNitriteInputBbo: 0,
+            nitrogenNitriteOutputBbo: 0,
+            nitrogenNitrateInputBbo: 0,
+            nitrogenNitrateOutputBbo: 0,
+            totalNitrogenInputBO: 0,
+            organicNitrogenOutputBbo: 0,
+            totalPhosphorusOutput: 0,
+            totalPhosphorusOutputBO: 0,
+            phSludge: 0,
+            sludgeTemperature: 0,
+            oxygenModeNitrificationZone: 0
         },
         bbo4: {
-            doseFromWeight: 57.5,
-            doseFromVolume: 10,
-            ashPercent: 10,
-            suspendSubstSourceWater: 10,
-            suspendSubstAfterSettling: 10,
-            suspendSubstInPurified: 10,
-            concentrationExcessActive: 10,
-            xpkInputAero: 10,
-            bpkInputOS: 10,
-            bpkInputBbo: 10,
-            bpkOutputBbo: 10,
-            nitrogenAmmoniumInputBbo: 10,
-            nitrogenAmmoniumOutputBbo: 10,
-            nitrogenNitriteInputBbo: 10,
-            nitrogenNitriteOutputBbo: 10,
-            nitrogenNitrateInputBbo: 10,
-            nitrogenNitrateOutputBbo: 10,
-            totalNitrogenInputBO: 10,
-            organicNitrogenOutputBbo: 10,
-            totalPhosphorusOutput: 10,
-            totalPhosphorusOutputBO: 10,
-            phSludge: 5,
-            sludgeTemperature: 15,
-            oxygenModeNitrificationZone: 10
+            doseFromWeight: 0,
+            doseFromVolume: 0,
+            ashPercent: 0,
+            suspendSubstSourceWater: 0,
+            suspendSubstAfterSettling: 0,
+            suspendSubstInPurified: 0,
+            concentrationExcessActive: 0,
+            xpkInputAero: 0,
+            bpkInputOS: 0,
+            bpkInputBbo: 0,
+            bpkOutputBbo: 0,
+            nitrogenAmmoniumInputBbo: 0,
+            nitrogenAmmoniumOutputBbo: 0,
+            nitrogenNitriteInputBbo: 0,
+            nitrogenNitriteOutputBbo: 0,
+            nitrogenNitrateInputBbo: 0,
+            nitrogenNitrateOutputBbo: 0,
+            totalNitrogenInputBO: 0,
+            organicNitrogenOutputBbo: 0,
+            totalPhosphorusOutput: 0,
+            totalPhosphorusOutputBO: 0,
+            phSludge: 0,
+            sludgeTemperature: 0,
+            oxygenModeNitrificationZone: 0
         },
         bbo5: {
-            doseFromWeight: 57.5,
-            doseFromVolume: 10,
-            ashPercent: 10,
-            suspendSubstSourceWater: 10,
-            suspendSubstAfterSettling: 10,
-            suspendSubstInPurified: 10,
-            concentrationExcessActive: 10,
-            xpkInputAero: 10,
-            bpkInputOS: 10,
-            bpkInputBbo: 10,
-            bpkOutputBbo: 10,
-            nitrogenAmmoniumInputBbo: 10,
-            nitrogenAmmoniumOutputBbo: 10,
-            nitrogenNitriteInputBbo: 10,
-            nitrogenNitriteOutputBbo: 10,
-            nitrogenNitrateInputBbo: 10,
-            nitrogenNitrateOutputBbo: 10,
-            totalNitrogenInputBO: 10,
-            organicNitrogenOutputBbo: 10,
-            totalPhosphorusOutput: 10,
-            totalPhosphorusOutputBO: 10,
-            phSludge: 5,
-            sludgeTemperature: 15,
-            oxygenModeNitrificationZone: 10
+            doseFromWeight: 0,
+            doseFromVolume: 0,
+            ashPercent: 0,
+            suspendSubstSourceWater: 0,
+            suspendSubstAfterSettling: 0,
+            suspendSubstInPurified: 0,
+            concentrationExcessActive: 0,
+            xpkInputAero: 0,
+            bpkInputOS: 0,
+            bpkInputBbo: 0,
+            bpkOutputBbo: 0,
+            nitrogenAmmoniumInputBbo: 0,
+            nitrogenAmmoniumOutputBbo: 0,
+            nitrogenNitriteInputBbo: 0,
+            nitrogenNitriteOutputBbo: 0,
+            nitrogenNitrateInputBbo: 0,
+            nitrogenNitrateOutputBbo: 0,
+            totalNitrogenInputBO: 0,
+            organicNitrogenOutputBbo: 0,
+            totalPhosphorusOutput: 0,
+            totalPhosphorusOutputBO: 0,
+            phSludge: 0,
+            sludgeTemperature: 0,
+            oxygenModeNitrificationZone: 0
         },
         bbo6: {
-            doseFromWeight: 57.5,
-            doseFromVolume: 10,
-            ashPercent: 10,
-            suspendSubstSourceWater: 10,
-            suspendSubstAfterSettling: 10,
-            suspendSubstInPurified: 10,
-            concentrationExcessActive: 10,
-            xpkInputAero: 10,
-            bpkInputOS: 10,
-            bpkInputBbo: 10,
-            bpkOutputBbo: 10,
-            nitrogenAmmoniumInputBbo: 10,
-            nitrogenAmmoniumOutputBbo: 10,
-            nitrogenNitriteInputBbo: 10,
-            nitrogenNitriteOutputBbo: 10,
-            nitrogenNitrateInputBbo: 10,
-            nitrogenNitrateOutputBbo: 10,
-            totalNitrogenInputBO: 10,
-            organicNitrogenOutputBbo: 10,
-            totalPhosphorusOutput: 10,
-            totalPhosphorusOutputBO: 10,
-            phSludge: 5,
-            sludgeTemperature: 15,
-            oxygenModeNitrificationZone: 10
+            doseFromWeight: 0,
+            doseFromVolume: 0,
+            ashPercent: 0,
+            suspendSubstSourceWater: 0,
+            suspendSubstAfterSettling: 0,
+            suspendSubstInPurified: 0,
+            concentrationExcessActive: 0,
+            xpkInputAero: 0,
+            bpkInputOS: 0,
+            bpkInputBbo: 0,
+            bpkOutputBbo: 0,
+            nitrogenAmmoniumInputBbo: 0,
+            nitrogenAmmoniumOutputBbo: 0,
+            nitrogenNitriteInputBbo: 0,
+            nitrogenNitriteOutputBbo: 0,
+            nitrogenNitrateInputBbo: 0,
+            nitrogenNitrateOutputBbo: 0,
+            totalNitrogenInputBO: 0,
+            organicNitrogenOutputBbo: 0,
+            totalPhosphorusOutput: 0,
+            totalPhosphorusOutputBO: 0,
+            phSludge: 0,
+            sludgeTemperature: 0,
+            oxygenModeNitrificationZone: 0
         },
         bbo7: {
-            doseFromWeight: 57.5,
-            doseFromVolume: 10,
-            ashPercent: 10,
-            suspendSubstSourceWater: 10,
-            suspendSubstAfterSettling: 10,
-            suspendSubstInPurified: 10,
-            concentrationExcessActive: 10,
-            xpkInputAero: 10,
-            bpkInputOS: 10,
-            bpkInputBbo: 10,
-            bpkOutputBbo: 10,
-            nitrogenAmmoniumInputBbo: 10,
-            nitrogenAmmoniumOutputBbo: 10,
-            nitrogenNitriteInputBbo: 10,
-            nitrogenNitriteOutputBbo: 10,
-            nitrogenNitrateInputBbo: 10,
-            nitrogenNitrateOutputBbo: 10,
-            totalNitrogenInputBO: 10,
-            organicNitrogenOutputBbo: 10,
-            totalPhosphorusOutput: 10,
-            totalPhosphorusOutputBO: 10,
-            phSludge: 5,
-            sludgeTemperature: 15,
-            oxygenModeNitrificationZone: 10
+            doseFromWeight: 0,
+            doseFromVolume: 0,
+            ashPercent: 0,
+            suspendSubstSourceWater: 0,
+            suspendSubstAfterSettling: 0,
+            suspendSubstInPurified: 0,
+            concentrationExcessActive: 0,
+            xpkInputAero: 0,
+            bpkInputOS: 0,
+            bpkInputBbo: 0,
+            bpkOutputBbo: 0,
+            nitrogenAmmoniumInputBbo: 0,
+            nitrogenAmmoniumOutputBbo: 0,
+            nitrogenNitriteInputBbo: 0,
+            nitrogenNitriteOutputBbo: 0,
+            nitrogenNitrateInputBbo: 0,
+            nitrogenNitrateOutputBbo: 0,
+            totalNitrogenInputBO: 0,
+            organicNitrogenOutputBbo: 0,
+            totalPhosphorusOutput: 0,
+            totalPhosphorusOutputBO: 0,
+            phSludge: 0,
+            sludgeTemperature: 0,
+            oxygenModeNitrificationZone: 0
         },
         bbo8: {
-            doseFromWeight: 57.5,
-            doseFromVolume: 10,
-            ashPercent: 10,
-            suspendSubstSourceWater: 10,
-            suspendSubstAfterSettling: 10,
-            suspendSubstInPurified: 10,
-            concentrationExcessActive: 10,
-            xpkInputAero: 10,
-            bpkInputOS: 10,
-            bpkInputBbo: 10,
-            bpkOutputBbo: 10,
-            nitrogenAmmoniumInputBbo: 10,
-            nitrogenAmmoniumOutputBbo: 10,
-            nitrogenNitriteInputBbo: 10,
-            nitrogenNitriteOutputBbo: 10,
-            nitrogenNitrateInputBbo: 10,
-            nitrogenNitrateOutputBbo: 10,
-            totalNitrogenInputBO: 10,
-            organicNitrogenOutputBbo: 10,
-            totalPhosphorusOutput: 10,
-            totalPhosphorusOutputBO: 10,
-            phSludge: 5,
-            sludgeTemperature: 15,
-            oxygenModeNitrificationZone: 10
+            doseFromWeight: 0,
+            doseFromVolume: 0,
+            ashPercent: 0,
+            suspendSubstSourceWater: 0,
+            suspendSubstAfterSettling: 0,
+            suspendSubstInPurified: 0,
+            concentrationExcessActive: 0,
+            xpkInputAero: 0,
+            bpkInputOS: 0,
+            bpkInputBbo: 0,
+            bpkOutputBbo: 0,
+            nitrogenAmmoniumInputBbo: 0,
+            nitrogenAmmoniumOutputBbo: 0,
+            nitrogenNitriteInputBbo: 0,
+            nitrogenNitriteOutputBbo: 0,
+            nitrogenNitrateInputBbo: 0,
+            nitrogenNitrateOutputBbo: 0,
+            totalNitrogenInputBO: 0,
+            organicNitrogenOutputBbo: 0,
+            totalPhosphorusOutput: 0,
+            totalPhosphorusOutputBO: 0,
+            phSludge: 0,
+            sludgeTemperature: 0,
+            oxygenModeNitrificationZone: 0
         }
     })
     const [datetime, setDatetime] = useState(null)
+    const [prevDatetime, setPrevDatetime] = useState(null)
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         labDataActions.getAllParams()
             .then((data) => {
-                setTableValues(prev => (data.data))
+                if (data) {
+                    setTableValues(prev => (data.data))
+                    setPrevDatetime(data.datetime)
+                }
+                else errorGet()
             })
             .catch(() => errorGet())
     }, []);
@@ -258,6 +276,7 @@ const LabData = () => {
     const onChange = (_, dateStr) => {
         setDatetime(dateStr)
     };
+
 
 
     const bbosName = ['ББО 1', 'ББО 2', 'ББО 3', 'ББО 4' , 'ББО 5', 'ББО 6' ,'ББО 7', 'ББО 8', 'Усредненное']
@@ -301,7 +320,7 @@ const LabData = () => {
                         <div className={styles.tableContainer}>
                             <table className={styles.table} style={{borderBottom: '0'}}>
                                 <tr>
-                                    <th colSpan={10}>Пинск ОС – Лабораторные данные</th>
+                                    <th colSpan={10}>Пинск ОС – Лабораторные данные. Данные от {prevDatetime}</th>
                                 </tr>
                                 <tr>
                                     <th>Параметр</th>
@@ -319,7 +338,7 @@ const LabData = () => {
                                                         <td key={bboID}>
                                                             <InputNumber
                                                                 value={tableValues[`bbo${bboID + 1}`][param.key]}
-                                                                variant='borderless' min={0} max={200}
+                                                                variant='borderless' min={0} max={1000}
                                                                 onChange={(e) => setTableValues(prev => ({
                                                                     ...prev,
                                                                     [`bbo${bboID + 1}`]: {
@@ -342,21 +361,37 @@ const LabData = () => {
                                 )}
                             </table>
 
-                            <DatePicker
-                                format='DD.MM.YYYY hh:mm:ss'
-                                showTime
-                                locale={locale}
-                                onChange={onChange}
-                                style={{maxWidth: '200px', marginTop: "12px"}}
-                            />
+                            <div style={{display: "flex", flexDirection: "row", gap: "8px", alignItems: "center", marginTop: "12px"}}>
+                                <span>Время отбора проб: </span>
+                                <DatePicker
+                                    defaultValue={dayjs()}
+                                    format='DD.MM.YYYY HH:mm:ss'
+                                    showTime
+                                    locale={locale}
+                                    onChange={onChange}
+                                    style={{maxWidth: '200px'}}
+                                />
+                            </div>
 
-                            <Button type="primary" onClick={() => handleForm()} style={{backgroundColor: "#00A3E7", fontWeight: 500, maxWidth: "fit-content", marginTop: "12px"}}>
+                            <Button type="primary" onClick={() => setIsModalOpen(true)} style={{backgroundColor: "#00A3E7", fontWeight: 500, maxWidth: "fit-content", marginTop: "12px"}}>
                                 Отправить
                             </Button>
                         </div>
                     </div>
                 </Form>
             </ConfigProvider>
+            <Modal title="Подтверждение операции"
+                   open={isModalOpen}
+                   onOk={() => {
+                       setIsModalOpen(false)
+                       handleForm()
+                   }}
+                   onCancel={() => setIsModalOpen(false)}
+                   cancelText="Отмена"
+                   okText="Подтвердить"
+            >
+                <p>Вы уверены в добавлении лабораторных данных?</p>
+            </Modal>
         </>
     )
 }
