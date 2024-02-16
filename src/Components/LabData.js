@@ -262,7 +262,7 @@ const LabData = () => {
     const [prevDatetime, setPrevDatetime] = useState(null)
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const [currentFocus, setCurrentFocus] = useState(1)
+    const [currentFocus, setCurrentFocus] = useState(0)
 
     useEffect(() => {
         labDataActions.getAllParams()
@@ -285,9 +285,26 @@ const LabData = () => {
 
     function handler({ key }) {
         if (ESCAPE_KEYS.includes(String(key))) {
-            setCurrentFocus(prev => prev + 1)
-            const element = document.getElementById(`${currentFocus}`);
-            element.focus()
+            if (currentFocus === 191) {
+                const element = document.getElementById(0);
+                element.focus()
+                element.select()
+                setCurrentFocus(0)
+                return
+            }
+            else if (currentFocus + 8 > 191){
+                const element = document.getElementById(`${(currentFocus + 8) % 191}`);
+                element.focus()
+                element.select()
+                setCurrentFocus(prev => (prev + 8) % 191)
+            }
+            else {
+                const element = document.getElementById(`${currentFocus + 8}`);
+                element.focus()
+                element.select()
+                setCurrentFocus(prev => prev + 8)
+            }
+
         }
     }
 
@@ -354,7 +371,7 @@ const LabData = () => {
                                                                 autoFocus={paramID * 8 + bboID === 0}
                                                                 id={`${paramID * 8 + bboID}`}
                                                                 value={tableValues[`bbo${bboID + 1}`][param.key]}
-                                                                variant='borderless' min={0} max={1000}
+                                                                variant={paramID * 8 + bboID === currentFocus ? '' : 'borderless'} min={0} max={1000}
                                                                 onChange={(e) => setTableValues(prev => ({
                                                                     ...prev,
                                                                     [`bbo${bboID + 1}`]: {
@@ -362,7 +379,7 @@ const LabData = () => {
                                                                         [param.key]: e
                                                                     }
                                                                 }))}
-                                                                onClick={() => setCurrentFocus(paramID * 8 + bboID + 1)}
+                                                                onClick={() => setCurrentFocus(paramID * 8 + bboID)}
                                                             />
                                                         </td>
                                                     )
