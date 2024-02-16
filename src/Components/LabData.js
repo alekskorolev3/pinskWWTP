@@ -7,6 +7,7 @@ import {API} from "../helpers/const";
 import locale from 'antd/es/date-picker/locale/ru_RU';
 import 'dayjs/locale/ru';
 import dayjs from "dayjs";
+import useEventListener from "@use-it/event-listener";
 
 const LabData = () => {
 
@@ -261,6 +262,8 @@ const LabData = () => {
     const [prevDatetime, setPrevDatetime] = useState(null)
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    const [currentFocus, setCurrentFocus] = useState(1)
+
     useEffect(() => {
         labDataActions.getAllParams()
             .then((data) => {
@@ -278,6 +281,17 @@ const LabData = () => {
     };
 
 
+    const ESCAPE_KEYS = ['13', 'Enter'];
+
+    function handler({ key }) {
+        if (ESCAPE_KEYS.includes(String(key))) {
+            setCurrentFocus(prev => prev + 1)
+            const element = document.getElementById(`${currentFocus}`);
+            element.focus()
+        }
+    }
+
+    useEventListener('keydown', handler);
 
     const bbosName = ['ББО 1', 'ББО 2', 'ББО 3', 'ББО 4' , 'ББО 5', 'ББО 6' ,'ББО 7', 'ББО 8', 'Усредненное']
     const paramsName = [
@@ -337,6 +351,8 @@ const LabData = () => {
                                                     return (
                                                         <td key={bboID}>
                                                             <InputNumber
+                                                                autoFocus={paramID * 8 + bboID === 0}
+                                                                id={`${paramID * 8 + bboID}`}
                                                                 value={tableValues[`bbo${bboID + 1}`][param.key]}
                                                                 variant='borderless' min={0} max={1000}
                                                                 onChange={(e) => setTableValues(prev => ({
@@ -346,6 +362,7 @@ const LabData = () => {
                                                                         [param.key]: e
                                                                     }
                                                                 }))}
+                                                                onClick={() => setCurrentFocus(paramID * 8 + bboID + 1)}
                                                             />
                                                         </td>
                                                     )
@@ -374,7 +391,7 @@ const LabData = () => {
                             </div>
 
                             <Button type="primary" onClick={() => setIsModalOpen(true)} style={{backgroundColor: "#00A3E7", fontWeight: 500, maxWidth: "fit-content", marginTop: "12px"}}>
-                                Отправить
+                                Сохранить
                             </Button>
                         </div>
                     </div>

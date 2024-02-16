@@ -49,6 +49,10 @@
     border-bottom: 1px solid #f0f0f0;
 }
 
+.table tr:nth-child(even) {
+    background-color: #fbfbfb;
+}
+
 .table th, td {
     padding: 8px;
     text-align: center;
