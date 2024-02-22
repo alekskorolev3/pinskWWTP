@@ -7,9 +7,9 @@ const Layout = () => {
 
     const navigate = useNavigate()
 
-    useEffect(() => {
-        navigate('/labData')
-    }, [])
+    // useEffect(() => {
+    //     navigate('/labDataOC')
+    // }, [])
 
     return (
         <div className="container">

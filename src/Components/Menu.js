@@ -31,6 +31,14 @@ const Menu = () => {
                             <span className={styles.menuText}>Лабораторные данные</span>
                         </li>
                     </NavLink>
+                    <NavLink to="/labDataOC" className={({isActive}) =>
+                        isActive ? styles.active : ""
+                    }>
+                        <li className={styles.menuItem}>
+                            <img src="/setting-4.svg" alt="setting"/>
+                            <span className={styles.menuText}>Лабораторные данные OC</span>
+                        </li>
+                    </NavLink>
                 </ul>
             </div>
         </section>
