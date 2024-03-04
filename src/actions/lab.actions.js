@@ -8,7 +8,8 @@ function useLabDataActions() {
 
     return {
         postLabData,
-        getAllParams
+        getAllParams,
+        getDates
     }
 
 
@@ -25,6 +26,16 @@ function useLabDataActions() {
 
     function getAllParams() {
         return fetchWrapper.get(`${API}/get_all_lab_value`)
+            .then(params => {
+                return params
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    }
+
+    function getDates() {
+        return fetchWrapper.get(`${API}/get_dates`)
             .then(params => {
                 return params
             })

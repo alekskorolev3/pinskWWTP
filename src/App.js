@@ -11,22 +11,19 @@ function App() {
     return (
         <Routes>
             <Route path="/" exact={true} element={
-                // <ProtectedRoute>
-                //     <Layout/>
-                // </ProtectedRoute>
-                <Layout/>
+                <ProtectedRoute>
+                    <Layout/>
+                </ProtectedRoute>
             }>
                 <Route path="/labData" element={
-                    // <ProtectedRoute>
-                    //     <LabData/>
-                    // </ProtectedRoute>
-                    <LabData/>
+                    <ProtectedRoute>
+                        <LabData/>
+                    </ProtectedRoute>
                 }/>
                 <Route path="/labDataOC" element={
-                    // <ProtectedRoute>
-                    //     <LabDataOC/>
-                    // </ProtectedRoute>
-                    <LabDataOC />
+                    <ProtectedRoute>
+                        <LabDataOC/>
+                    </ProtectedRoute>
                 }/>
             </Route>
             <Route path="/login" element={<Login/>}/>

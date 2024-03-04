@@ -28,7 +28,7 @@ const Register = () => {
 
     useEffect(() => {
         if (auth) {
-            navigate("/data")
+            navigate("/")
         }
     }, [])
 
