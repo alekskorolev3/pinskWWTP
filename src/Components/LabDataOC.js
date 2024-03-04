@@ -215,10 +215,21 @@ const LabData = () => {
     const [datetime, setDatetime] = useState(null)
     const [prevDatetime, setPrevDatetime] = useState(null)
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [dates, setDates] = useState({})
 
     const [currentFocus, setCurrentFocus] = useState(0)
 
     useEffect(() => {
+
+        labDataActions.getDates()
+            .then((data) => {
+                if (data) {
+                    console.log(data)
+                    setDates(data)
+                }
+                else errorGet()
+            })
+
         labDataActions.getAllParams()
             .then((data) => {
                 if (data) {

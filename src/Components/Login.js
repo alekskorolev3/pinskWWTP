@@ -28,7 +28,7 @@ const Login = () => {
 
     useEffect(() => {
         if (!auth && auth?.hasOwnProperty("authenticatedUser")) {
-            navigate("/data")
+            navigate("/")
         }
     }, [])
 
@@ -43,7 +43,7 @@ const Login = () => {
                 if (!data) {
                     error()
                 } else {
-                    navigate("/data")
+                    navigate("/")
                 }
 
                 setLoading(false)
