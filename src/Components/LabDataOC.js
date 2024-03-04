@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react"
 
 import styles from '../styles/Modules.module.css'
-import {Button, ConfigProvider, DatePicker, Form, InputNumber, message, Modal} from "antd";
+import {Button, ConfigProvider, DatePicker, Form, InputNumber, message, Modal, Select} from "antd";
 import {useLabDataActions} from "../actions/lab.actions";
 import {API} from "../helpers/const";
 import locale from 'antd/es/date-picker/locale/ru_RU';
@@ -287,11 +287,15 @@ const LabData = () => {
     ]
 
     const auth = useRecoilValue(authAtom)
-    // const setAuth = useSetRecoilState(authAtom)
-    // setAuth('userProsto')
+
     useEffect(() => {
         console.log(auth)
     }, [])
+
+    const [dateTableSave, setDateTableSave] = useState([
+        {id:1, value: '04.03.2024', label: '04.03.2024'}
+    ])
+
 
     return (
         <>
@@ -303,6 +307,7 @@ const LabData = () => {
             }}>
                 <Form className={styles.form}>
                     <div className={styles.container}>
+                        <Select defaultValue={dateTableSave[0]?.value} options={dateTableSave}/>
                         <div className={styles.tableContainer}>
                             <table className={styles.table} style={{borderBottom: '0'}}>
                                 <tr>
