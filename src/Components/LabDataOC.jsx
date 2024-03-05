@@ -215,17 +215,23 @@ const LabData = () => {
     const [datetime, setDatetime] = useState(null)
     const [prevDatetime, setPrevDatetime] = useState(null)
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [dates, setDates] = useState({})
-
+    const [dates, setDates] = useState([])
+    const [selectDates, setSelectDates] = useState(null)
+    const [datesModification, setDatesModification] = useState([])
+    const [selectDatesModification, setSelectDatesModification] = useState(null)
+    const [loadedOldData, setLoadedOldData] = useState(false)
     const [currentFocus, setCurrentFocus] = useState(0)
 
     useEffect(() => {
-
         labDataActions.getDates()
             .then((data) => {
                 if (data) {
-                    console.log(data)
-                    setDates(data)
+                    setDates(data.map(i => {
+                        return {
+                            value: i,
+                            label: new Date(i).toLocaleDateString()
+                        }
+                    }))
                 }
                 else errorGet()
             })
@@ -244,6 +250,56 @@ const LabData = () => {
     const onChange = (_, dateStr) => {
         setDatetime(dateStr)
     };
+
+    // Отправляем дату => получаем id модификаций и представляем их в select
+    const updateDataForSelectDates = (date) => {
+        setDatesModification([])
+        labDataActions.getLabFromDates(date)
+            .then((dataObj) => {
+                if (Object.values(dataObj).length) {
+                    let count = 1
+                    const array = []
+                    for (let key in dataObj) {
+                        if(count === 1) array.push({label: dataObj[key], value: key})
+                        if (count === 8) count = 1
+                        else count++
+                    }
+                    setDatesModification(array)
+                }
+                else {
+                    setDatesModification([{label: 'Нет модификаций на эту дату', value: 0, disabled: true}])
+                }
+                
+            })
+            .catch(() => errorGet())
+    }
+
+    // Отправляем id модификации => получаем данные модификации для заполнения таблицы 
+    const updateDataForSelectDatesModification = (id) => {
+        for (let i = +id; i < +id + 8; i++) {
+            labDataActions.getLabFromID(i)
+            .then((data) => {
+                if (data) {
+                    setTableValues(prev => ({...prev, [`bbo${data[0].bbo_id}`] : data[0] }))
+                    setPrevDatetime(data[0].datetime)
+                }
+                else errorGet()
+            })
+            .catch(() => errorGet())
+        }
+        
+    }
+
+    // Перезаписать старую модификацию по id 
+    const overwriteOldValues = () => {
+        for (let i in tableValues) {
+            labDataActions.updateLabVal({...tableValues[i]}, tableValues[i].id)
+            .then((data) => {
+                console.log(data)
+            })
+            .catch(() => errorGet())
+        }
+    }
 
 
     const ESCAPE_KEYS = ['13', 'Enter'];
@@ -297,16 +353,12 @@ const LabData = () => {
         {key: 'sludgeTemperature',  name : 'Температура иловой смеси в Биоблоке , °С'},
     ]
 
+    const handleButtonUpdateValues = () => {
+        setLoadedOldData(true)
+        updateDataForSelectDatesModification(selectDatesModification)
+    }
+
     const auth = useRecoilValue(authAtom)
-
-    useEffect(() => {
-        console.log(auth)
-    }, [])
-
-    const [dateTableSave, setDateTableSave] = useState([
-        {id:1, value: '04.03.2024', label: '04.03.2024'}
-    ])
-
 
     return (
         <>
@@ -318,7 +370,27 @@ const LabData = () => {
             }}>
                 <Form className={styles.form}>
                     <div className={styles.container}>
-                        <Select defaultValue={dateTableSave[0]?.value} options={dateTableSave}/>
+                        <div className={styles.savesDate}>
+                            <div className={styles.savesDateElem}>
+                                <span>Дата сохранения</span>
+                                <Select onChange={(date) => {
+                                    updateDataForSelectDates(date)
+                                    setSelectDatesModification(null)
+                                    setSelectDates(date)
+                                }} className={styles.savesDateElem} placeholder='Выберите дату сохранения' options={dates}/>
+                            </div>
+                            {!!selectDates && 
+                                <div className={styles.savesDateElem}>
+                                    <span>Дата модификации: </span>
+                                    <Select onChange={(id) => {
+                                        setSelectDatesModification(id)
+                                    }} className={styles.savesDateElem} value={selectDatesModification} placeholder='Выберите модификацию' options={datesModification}/>
+                                </div>
+                            }
+                            <Button disabled={!selectDatesModification} onClick={handleButtonUpdateValues} className={styles.savesDateElem} type="primary" style={{backgroundColor: "#00A3E7", fontWeight: 500, maxWidth: "fit-content",}}>
+                                Загрузить последние данные
+                            </Button>
+                        </div>                        
                         <div className={styles.tableContainer}>
                             <table className={styles.table} style={{borderBottom: '0'}}>
                                 <tr>
@@ -367,9 +439,8 @@ const LabData = () => {
                                     style={{maxWidth: '200px'}}
                                 />
                             </div>
-
                             <Button type="primary" onClick={() => setIsModalOpen(true)} style={{backgroundColor: "#00A3E7", fontWeight: 500, maxWidth: "fit-content", marginTop: "12px"}}>
-                                Сохранить
+                                 {loadedOldData ? "Перезаписать значения" : "Сохранить"}
                             </Button>
                         </div>
                     </div>
@@ -379,13 +450,13 @@ const LabData = () => {
                    open={isModalOpen}
                    onOk={() => {
                        setIsModalOpen(false)
-                       handleForm()
+                       loadedOldData ? overwriteOldValues() : handleForm()
                    }}
                    onCancel={() => setIsModalOpen(false)}
                    cancelText="Отмена"
                    okText="Подтвердить"
             >
-                <p>Вы уверены в добавлении лабораторных данных?</p>
+                {loadedOldData ? <p>Вы уверены в перезаписывании лабораторных данных?</p> : <p>Вы уверены в добавлении лабораторных данных?</p>}
             </Modal>
         </>
     )

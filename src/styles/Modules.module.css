@@ -93,6 +93,23 @@
     text-align: center!important;
 }
 
+.savesDate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.savesDateElem {
+    align-self: stretch;
+}
+
+.savesDateElem {
+    flex: 1 0 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
 @media screen and (max-width: 900px){
     .innerContainer {
