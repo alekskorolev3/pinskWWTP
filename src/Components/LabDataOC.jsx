@@ -221,8 +221,8 @@ const LabData = () => {
     const [selectDatesModification, setSelectDatesModification] = useState(null)
     const [loadedOldData, setLoadedOldData] = useState(false)
     const [currentFocus, setCurrentFocus] = useState(0)
-
-    useEffect(() => {
+    const [clearReload, setClearReload] = useState(false)
+    const handleGetDates = () => {
         labDataActions.getDates()
             .then((data) => {
                 if (data) {
@@ -235,7 +235,9 @@ const LabData = () => {
                 }
                 else errorGet()
             })
+    }
 
+    const handleAllParams = () => {
         labDataActions.getAllParams()
             .then((data) => {
                 if (data) {
@@ -245,6 +247,11 @@ const LabData = () => {
                 else errorGet()
             })
             .catch(() => errorGet())
+    }
+    
+    useEffect(() => {
+        handleGetDates()
+        handleAllParams()
     }, []);
 
     const onChange = (_, dateStr) => {
@@ -260,7 +267,7 @@ const LabData = () => {
                     let count = 1
                     const array = []
                     for (let key in dataObj) {
-                        if(count === 1) array.push({label: dataObj[key], value: key})
+                        if(count === 1) array.push({label: new Date(dataObj[key]).toLocaleString(), value: key})
                         if (count === 8) count = 1
                         else count++
                     }
@@ -299,6 +306,8 @@ const LabData = () => {
             })
             .catch(() => errorGet())
         }
+        handleGetDates()
+        setClearReload(true)
     }
 
 
@@ -325,7 +334,6 @@ const LabData = () => {
                 element.select()
                 setCurrentFocus(prev => prev + 8)
             }
-
         }
     }
 
@@ -358,6 +366,13 @@ const LabData = () => {
         updateDataForSelectDatesModification(selectDatesModification)
     }
 
+    const handleClearReload = () => {
+        setSelectDates(null)
+        setSelectDatesModification(null)
+        handleAllParams()
+        setClearReload(false)
+    }
+
     const auth = useRecoilValue(authAtom)
 
     return (
@@ -377,7 +392,7 @@ const LabData = () => {
                                     updateDataForSelectDates(date)
                                     setSelectDatesModification(null)
                                     setSelectDates(date)
-                                }} className={styles.savesDateElem} placeholder='Выберите дату сохранения' options={dates}/>
+                                }} value={selectDates} className={styles.savesDateElem} placeholder='Выберите дату сохранения' options={dates}/>
                             </div>
                             {!!selectDates && 
                                 <div className={styles.savesDateElem}>
@@ -387,9 +402,15 @@ const LabData = () => {
                                     }} className={styles.savesDateElem} value={selectDatesModification} placeholder='Выберите модификацию' options={datesModification}/>
                                 </div>
                             }
-                            <Button disabled={!selectDatesModification} onClick={handleButtonUpdateValues} className={styles.savesDateElem} type="primary" style={{backgroundColor: "#00A3E7", fontWeight: 500, maxWidth: "fit-content",}}>
-                                Загрузить последние данные
-                            </Button>
+                            <div className={styles.savesDateElem}>
+                                <Button disabled={!selectDatesModification} onClick={handleButtonUpdateValues} className={styles.savesDateElem} type="primary" style={{backgroundColor: "#00A3E7", fontWeight: 500, maxWidth: "fit-content",}}>
+                                    Загрузить последние данные
+                                </Button>
+                                {clearReload && 
+                                <Button onClick={handleClearReload} className={styles.savesDateElem} type="primary" style={{backgroundColor: "#00A3E7", fontWeight: 500, maxWidth: "fit-content",}}>
+                                    Сбросить
+                                </Button>}
+                            </div>
                         </div>                        
                         <div className={styles.tableContainer}>
                             <table className={styles.table} style={{borderBottom: '0'}}>
@@ -428,7 +449,7 @@ const LabData = () => {
                                 )}
                             </table>
 
-                            <div style={{display: "flex", flexDirection: "row", gap: "8px", alignItems: "center", marginTop: "12px"}}>
+                            {!loadedOldData && <div style={{display: "flex", flexDirection: "row", gap: "8px", alignItems: "center", marginTop: "12px"}}>
                                 <span>Время отбора проб: </span>
                                 <DatePicker
                                     defaultValue={dayjs()}
@@ -438,7 +459,7 @@ const LabData = () => {
                                     onChange={onChange}
                                     style={{maxWidth: '200px'}}
                                 />
-                            </div>
+                            </div>}
                             <Button type="primary" onClick={() => setIsModalOpen(true)} style={{backgroundColor: "#00A3E7", fontWeight: 500, maxWidth: "fit-content", marginTop: "12px"}}>
                                  {loadedOldData ? "Перезаписать значения" : "Сохранить"}
                             </Button>
