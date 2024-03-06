@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from 'react'
 import styles from "../styles/Menu.module.css"
 import {NavLink} from "react-router-dom";
+import {useUserActions} from "../actions/user.actions";
 
 const Menu = () => {
     const [date, setDate] = useState(new Date());
+    const userActions = useUserActions();
 
     useEffect(() => {
         let timer = setInterval(() => setDate(new Date()), 1000)
@@ -47,6 +49,12 @@ const Menu = () => {
                         </li>
                     </NavLink>
                 </ul>
+            </div>
+
+            <div className={styles.menuItem} style={{borderBottom: "unset", borderTop: "1px solid #7698AA"}}
+                 onClick={userActions.logout}>
+                {/*<img src="/logout.svg" alt="logout"/>*/}
+                <span className={styles.menuText}>Выход</span>
             </div>
         </section>
     )

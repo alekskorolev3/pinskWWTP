@@ -1,7 +1,9 @@
 import {useRecoilState} from "recoil";
 import {authAtom} from "../state/auth";
+import {ADDRESS} from "./const";
 
-export { useFetchWrapper };
+export {useFetchWrapper};
+
 
 function useFetchWrapper() {
 
@@ -25,22 +27,20 @@ function useFetchWrapper() {
                 requestOptions.body = JSON.stringify(body);
             }
 
-            console.log(requestOptions)
 
-            return fetch(url, requestOptions).then(handleResponse);
+            return fetch(url, requestOptions).then(response => handleResponse(response, method, body));
         }
     }
 
-    
-    function handleResponse(response) {
-        return response.text().then(text => {
+
+    function handleResponse(response, method, body) {
+        return response.text().then(async text => {
             const data = text && JSON.parse(text);
 
             if (!response.ok) {
-                if ([401, 403].includes(response.status) && auth?.token) {
-                    localStorage.removeItem('user');
-                    setAuth(null);
-                    // history.push('/login');
+
+                if ([401, 403].includes(response.status)) {
+                    refreshToken(method, response?.url, body)
                 }
 
                 const error = (data && data.message) || response.statusText;
@@ -50,11 +50,56 @@ function useFetchWrapper() {
         });
     }
 
+    async function refreshToken(method, url, body) {
+
+        let requestOptions = {
+            method: 'POST',
+            headers: authHeader(),
+            body: JSON.stringify({
+                    refresh: auth?.refresh
+                }
+            )
+        }
+
+        requestOptions.headers['Content-Type'] = 'application/json';
+
+        return fetch(`${ADDRESS}/token/refresh/`, requestOptions)
+            .then((response) => {
+                return response.text().then(text => {
+                    const data = text && JSON.parse(text);
+
+                    if (data.access) {
+                        let user = JSON.parse(localStorage.getItem('user'))
+                        localStorage.setItem('user', JSON.stringify({...user, access: data?.access, refresh: data?.refresh}));
+                        user = JSON.parse(localStorage.getItem('user'))
+                        setAuth(user);
+                        retryOriginalRequest(method, url, body, data.access)
+                    }
+                });
+            })
+    }
+
+    function retryOriginalRequest(method, url, body, token) {
+
+        const requestOptions = {
+            method,
+            headers: {Authorization: `Bearer ${token}`}
+        };
+
+        if (body) {
+            requestOptions.headers['Content-Type'] = 'application/json';
+            requestOptions.body = JSON.stringify(body);
+        }
+
+        return fetch(url, requestOptions).then(response => handleResponse(response, method));
+    }
+
     function authHeader() {
+
         const token = auth?.access;
         const isLoggedIn = !!token;
         if (isLoggedIn) {
-            return { Authorization: `Bearer ${token}` };
+            return {Authorization: `Bearer ${token}`};
         } else {
             return {};
         }
