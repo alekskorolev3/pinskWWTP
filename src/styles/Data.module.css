@@ -94,11 +94,11 @@
 }
 
 .imgOff {
-    background-image: url("../../public/schema_2.svg");
+    /* background-image: url("../../public/schema_2.svg"); */
 }
 
 .imgOn {
-    background-image: url("../../public/schema.svg");
+    /* background-image: url("../../public/schema.svg"); */
 }
 
 .paramGroup {

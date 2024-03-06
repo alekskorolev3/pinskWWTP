@@ -6,6 +6,7 @@ import LabDataOC from "./Components/LabDataOC";
 import Login from './Components/Login';
 import Register from './Components/Register';
 import ProtectedRoute from './Components/ProtectedRoute';
+import Data from './Components/Data';
 
 function App() {
     return (
@@ -15,6 +16,12 @@ function App() {
                     <Layout/>
                 </ProtectedRoute>
             }>
+
+                <Route path="/data" element={
+                    <ProtectedRoute>
+                        <Data/>
+                    </ProtectedRoute>
+                }/>
                 <Route path="/labData" element={
                     <ProtectedRoute>
                         <LabData/>

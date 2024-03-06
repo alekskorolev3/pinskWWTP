@@ -22,7 +22,14 @@ const Menu = () => {
                 </div>
 
                 <ul className={styles.menuWrapper}>
-
+                    <NavLink to="/data" className={({isActive}) =>
+                        isActive ? styles.active : ""
+                    }>
+                        <li className={styles.menuItem}>
+                            <img src="/setting-4.svg" alt="setting"/>
+                            <span className={styles.menuText}>Главная</span>
+                        </li>
+                    </NavLink>
                     <NavLink to="/labData" className={({isActive}) =>
                         isActive ? styles.active : ""
                     }>

@@ -43,7 +43,7 @@ const Login = () => {
                 if (!data) {
                     error()
                 } else {
-                    navigate("/")
+                    navigate("/labDataOC")
                 }
 
                 setLoading(false)
