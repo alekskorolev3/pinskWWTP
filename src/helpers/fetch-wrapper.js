@@ -34,13 +34,13 @@ function useFetchWrapper() {
 
 
     function handleResponse(response, method, body) {
-        return response.text().then(async text => {
+        return response.text().then(text => {
             const data = text && JSON.parse(text);
 
             if (!response.ok) {
 
                 if ([401, 403].includes(response.status)) {
-                    refreshToken(method, response?.url, body)
+                    return refreshToken(method, response?.url, body)
                 }
 
                 const error = (data && data.message) || response.statusText;
@@ -73,7 +73,7 @@ function useFetchWrapper() {
                         localStorage.setItem('user', JSON.stringify({...user, access: data?.access, refresh: data?.refresh}));
                         user = JSON.parse(localStorage.getItem('user'))
                         setAuth(user);
-                        retryOriginalRequest(method, url, body, data.access)
+                        return retryOriginalRequest(method, url, body, data.access)
                     }
                 });
             })

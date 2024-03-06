@@ -222,7 +222,7 @@ const LabData = () => {
     const [loadedOldData, setLoadedOldData] = useState(false)
     const [currentFocus, setCurrentFocus] = useState(0)
     const [clearReload, setClearReload] = useState(false)
-    const handleGetDates = () => {
+    const handleGetDates = async () => {
         labDataActions.getDates()
             .then((data) => {
                 if (data) {
@@ -237,7 +237,7 @@ const LabData = () => {
             })
     }
 
-    const handleAllParams = () => {
+    const handleAllParams = async () => {
         labDataActions.getAllParams()
             .then((data) => {
                 if (data) {
@@ -249,7 +249,7 @@ const LabData = () => {
             .catch(() => errorGet())
     }
     
-    useEffect(() => {
+    useEffect( () => {
         handleGetDates()
         handleAllParams()
     }, []);
