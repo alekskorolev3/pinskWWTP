@@ -10,7 +10,7 @@ const Header = () => {
 
                 <img src="/menu-open.svg" alt="menu-open" className={styles.menuIcon}/>
 
-                <span className={styles.title}>Помощник оператора AMIS-WWTP</span>
+                <span className={styles.title}>СППР AMIS-WWTP</span>
 
                 <div className={styles.logoWrapper}>
                     <img src="/amisit_logo.svg" alt="logo1"/>
